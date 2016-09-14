@@ -56,7 +56,7 @@ angular.module('starter', [
   // setup an abstract state for the tabs directive
     .state('tab', {
     url: '/tab',
-    abstract: false,
+    abstract: true,
     templateUrl: 'templates/tabs.html'
   })
 
@@ -67,7 +67,8 @@ angular.module('starter', [
     views: {
       'tab-artist': {
         templateUrl: 'templates/tab-artist.html',
-        controller: 'DashCtrl'
+        controller: 'ArtistCtrl',
+        controllerAs: "vm"
       }
     }
   })

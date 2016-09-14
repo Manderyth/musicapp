@@ -1,6 +1,23 @@
 angular.module('starter.controllers', [])
 
-.controller('DashCtrl', function($scope) {})
+.controller('ArtistCtrl', function($scope) {
+  var self = this;
+  var artists = [
+    {artist: "Poets of the Fall",
+     songs: "Heal my Wounds"
+    },
+    {artist: "Sonata Arctica",
+     songs: "Deathaura"
+    },
+    {artist: "Nightwish",
+     songs: "Slow Love Slow"
+    }
+  ]
+  
+  function searchArtists () {
+    // see Angular 1.5 6.02 ng-repeat to find an example of a built in array like this
+  }
+})
 
 .controller('landingCtrl', function ($scope, $firebaseAuth, $state, $log, $firebaseObject) {
   vm = this;
@@ -63,13 +80,13 @@ angular.module('starter.controllers', [])
           photoURL: vm.providerUser.photoURL
         }).then(function () {
           $log.log("user created.");
-          $state.go('tab');
+          $state.go('tab.artist');
         }, function () {
           $log.log("user could not be created.");
         });
       } else {
         $log.log('user already created!');
-        $state.go('tab');
+        $state.go('tab.artist');
       }
     });
   }
