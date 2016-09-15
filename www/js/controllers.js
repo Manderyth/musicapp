@@ -1,8 +1,8 @@
 angular.module('starter.controllers', [])
 
-.controller('ArtistCtrl', function($scope) {
+.controller('ArtistCtrl', function(Spotify) {
   var self = this;
-  var artists = [
+    var artists = [
     {artist: "Poets of the Fall",
      songs: "Heal my Wounds"
     },
@@ -13,10 +13,26 @@ angular.module('starter.controllers', [])
      songs: "Slow Love Slow"
     }
   ]
-  
-  function searchArtists () {
-    // see Angular 1.5 6.02 ng-repeat to find an example of a built in array like this
+  self.getNewReleases = getNewReleases;
+  self.loginSpotify = loginSpotify;
+
+  function loginSpotify(){
+    Spotify.login();
   }
+
+  function getNewReleases(){
+    // Spotify.login();
+    Spotify.getNewReleases({ country: "NL" }).then(function (data) {
+      console.log(data);
+    });
+  }
+
+
+
+  function searchArtists ($scope) {
+    // see Angular 1.5 6.02 ng-repeat to find an example of a built in array like this
+    $scope.artist = artists [0, 1, 2];
+    }
 })
 
 .controller('landingCtrl', function ($scope, $firebaseAuth, $state, $log, $firebaseObject) {

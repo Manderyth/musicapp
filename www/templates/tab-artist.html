@@ -7,6 +7,15 @@
       <input placeholder="Search">
       </input>
     </ion-searchbar><br>
+
+    <div>
+        <div>{{ artist.artist }}</div>
+        <div>{{ artist.songs }}</div>
+        <button ng-click="vm.getNewReleases()">New releases</button>
+        <button ng-click="vm.loginSpotify()">Login</button>
+    </div>
+
+
     <h5>
     Display random list of artists from spotify api
     </h5>
