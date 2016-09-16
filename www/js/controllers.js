@@ -5,7 +5,7 @@ angular.module('starter.controllers', [])
 .controller('ArtistCtrl', function($http) {
   vm = this;
   vm.soundCloudData = soundCloudData;
-  
+
   function soundCloudData(track){
     var clientid = 'a8899b413fa9931c7bf9b07305acf27f';
     $http({
@@ -26,10 +26,21 @@ angular.module('starter.controllers', [])
         console.log(vm.soundResults);
         return searchData;
       })
-
   }
-  
-})
+
+  var searchData = function(users) {
+    var clientid = 'a8899b413fa9931c7bf9b07305acf27f';
+        $http({
+          method: 'GET',
+          url: 'http://api.soundcloud.com/users/' + users + '.json?client_id=' + clientid
+      })
+
+    vm.soundResults = searchData;
+    console.log(vm.soundResults);
+    return searchData;
+  }; // closes search()
+
+}) //closes ArtistCtrl
 
 .controller('landingCtrl', function ($http,$scope, $firebaseAuth, $state, $log, $firebaseObject) {
   vm = this;
