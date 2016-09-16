@@ -1,6 +1,6 @@
 angular.module('starter.controllers', [])
 
-.controller('ArtistCtrl', function(Spotify) {
+.controller('ArtistCtrl', function() {
   var self = this;
     var artists = [
     {artist: "Poets of the Fall",
@@ -13,20 +13,7 @@ angular.module('starter.controllers', [])
      songs: "Slow Love Slow"
     }
   ]
-  self.getNewReleases = getNewReleases;
-  self.loginSpotify = loginSpotify;
-
-  function loginSpotify(){
-    Spotify.login();
-  }
-
-  function getNewReleases(){
-    // Spotify.login();
-    Spotify.getNewReleases({ country: "NL" }).then(function (data) {
-      console.log(data);
-    });
-  }
-
+ 
 
 
   function searchArtists ($scope) {
@@ -44,7 +31,6 @@ angular.module('starter.controllers', [])
   vm.logout = logout;
 
   function login(provider) {
-    console.log("I'm in login");
     var auth = $firebaseAuth();
 
     auth.$signInWithPopup(provider)
