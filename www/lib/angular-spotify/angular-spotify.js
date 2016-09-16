@@ -516,25 +516,16 @@
               'menubar=no,location=no,resizable=yes,scrollbars=yes,status=no,width=' + w + ',height=' + h + ',top=' + top + ',left=' + left,
               function () {
                 if (!authCompleted) {
-<<<<<<< HEAD
                   authWindow.close();
-                  console.log('Failed auth');
-=======
->>>>>>> 141b49544a1ab946c035780b457e6ff5133717a2
                   deferred.reject();
                 }
               }
             );
 
             function storageChanged (e) {
-<<<<<<< HEAD
               console.log(e.key);
               // console.log("Storage Changed");
               if (e.key === 'spotify-token') {
-                console.log(e.key);
-=======
-              if (e.key === 'spotify-token') {
->>>>>>> 141b49544a1ab946c035780b457e6ff5133717a2
                 if (authWindow) { authWindow.close(); }
                 authCompleted = true;
 

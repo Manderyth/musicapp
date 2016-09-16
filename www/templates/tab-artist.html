@@ -9,12 +9,15 @@
     </ion-searchbar><br>
 
     <div>
+      <button ng-click="vm.soundCloudData('65576692')"> Search</button>
+    </div>
+    <div ng-repeat="detail in vm.soundResults">
+      <div style="height: 100px; width: 300px;border: 3px solid black">{{detail.band}}</div>
+      <div style="height: 100px; width: 300px;border: 3px solid black">{{detail.bandUrl}}</div>
 
     </div>
 
 
-    <h5>
-    Display random list of artists from spotify api
-    </h5>
+
   </ion-content>
 </ion-view>

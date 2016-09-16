@@ -3,7 +3,7 @@
 
         <button ng-if="vm.displayName" ng-click="vm.logout()">You are {{ vm.displayName }}</button>
         <button class="button button-positive" ng-if="!vm.displayName" ng-click="vm.login('google')">Login with Google</button>
-        <button class="button button-balanced" ng-if="!vm.displayName" ng-click="vm.showEmailLogin()">Login with Email</button>
+        <button class="button button-balanced" ng-if="!vm.displayName" ng-click="vm.shsowEmailLogin()">Login with Email</button>
 
         <div ng-show ="vm.showLogin">
             <div>

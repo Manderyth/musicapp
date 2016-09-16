@@ -1,53 +1,34 @@
 angular.module('starter.controllers', [])
 
-<<<<<<< HEAD
-.controller('ArtistCtrl', function() {
-=======
-.controller('ArtistCtrl', function(Spotify) {
->>>>>>> 141b49544a1ab946c035780b457e6ff5133717a2
-  var self = this;
-    var artists = [
-    {artist: "Poets of the Fall",
-     songs: "Heal my Wounds"
-    },
-    {artist: "Sonata Arctica",
-     songs: "Deathaura"
-    },
-    {artist: "Nightwish",
-     songs: "Slow Love Slow"
-    }
-  ]
-<<<<<<< HEAD
- 
 
 
-  function searchArtists ($scope) {
-    // see Angular 1.5 6.02 ng-repeat to find an example of a built in array like this
-    $scope.artist = artists [0, 1, 2];
-    }
-})
-=======
-  self.getNewReleases = getNewReleases;
-  self.loginSpotify = loginSpotify;
->>>>>>> 141b49544a1ab946c035780b457e6ff5133717a2
+.controller('ArtistCtrl', function($http) {
+  vm = this;
+  vm.soundCloudData = soundCloudData;
+  
+  function soundCloudData(track){
+    var clientid = 'a8899b413fa9931c7bf9b07305acf27f';
+    $http({
+        method: 'GET',
+        url: 'http://api.soundcloud.com/tracks/'+track+'.json?client_id='+clientid
+      }).
+      success(function (data){
+        var searchData = [{
+          band: data.user.username,
+          bandUrl: data.user.permalink_url,
+          title: data.title,
+          trackUrl: data.permalink_url,
+          albumArt: data.artwork_url.replace("large","t500x500"),
+          wave: data.waveform_url,
+          stream: data.stream_url + '?client_id=' + clientid
+        }];
+        vm.soundResults = searchData;
+        console.log(vm.soundResults);
+        return searchData;
+      })
 
-  function loginSpotify(){
-    Spotify.login();
   }
-
-  function getNewReleases(){
-    // Spotify.login();
-    Spotify.getNewReleases({ country: "NL" }).then(function (data) {
-      console.log(data);
-    });
-  }
-
-
-
-  function searchArtists ($scope) {
-    // see Angular 1.5 6.02 ng-repeat to find an example of a built in array like this
-    $scope.artist = artists [0, 1, 2];
-    }
+  
 })
 
 .controller('landingCtrl', function ($http,$scope, $firebaseAuth, $state, $log, $firebaseObject) {
@@ -57,30 +38,7 @@ angular.module('starter.controllers', [])
   vm.loginWithEmail = loginWithEmail;
   vm.showEmailLogin = showEmailLogin;
   vm.logout = logout;
-  vm.soundCloudData = soundCloudData; 
 
-
-  function soundCloudData(track){
-    var clientid = 'b23455855ab96a4556cbd0a98397ae8c'
-    $http({
-      method: 'GET',
-      url: 'http://api.soundcloud.com/tracks/'+track+'.json?client_id='+clientid
-    }).
-    success(function (data){
-      console.log(data)
-      vm.band = data.user.username; 
-      vm.bandUrl = data.user.permalink_url;
-      vm.title = data.title;
-      vm.trackUrl - data.permalink_url;
-      vm.albumArt = data.artwork_url.replace("large","t500x500")
-      vm.wave = data.waveform_url;
-      vm.stream = data.stream_url + '?client_id=' + clientid;
-    })
-  }
-
-
-
-  
   function login(provider) {
     var auth = $firebaseAuth();
 
@@ -154,9 +112,6 @@ angular.module('starter.controllers', [])
     auth.$signOut();
     vm.displayName = undefined;
   }
-
-
-  soundCloudData('65576692');
 })
 
 .controller('SongsCtrl', function($scope, Songs) {
