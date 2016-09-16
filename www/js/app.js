@@ -5,11 +5,16 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', [
+var app = angular.module('starter', [
     'ionic', 
     'starter.controllers', 
     'firebase',
+<<<<<<< HEAD
     'ngStorage'
+=======
+    'ngStorage',
+    'spotify'
+>>>>>>> 141b49544a1ab946c035780b457e6ff5133717a2
     ])
 
 .run(function($ionicPlatform) {
@@ -38,13 +43,22 @@ angular.module('starter', [
 
 })
 
+<<<<<<< HEAD
 .config(function($stateProvider, $urlRouterProvider) {
+=======
+.config(function($stateProvider, $urlRouterProvider, SpotifyProvider) {
+  console.log(SpotifyProvider);
+  SpotifyProvider.setClientId('e306aea3736541b2a3c06a1d832a5a96');
+  SpotifyProvider.setRedirectUri('http://localhost:8100/#/tab/artist');
+  SpotifyProvider.setScope('user-read-private playlist-read-private playlist-modify-private playlist-modify-public');
+>>>>>>> 141b49544a1ab946c035780b457e6ff5133717a2
   // If you already have an auth token
   // SpotifyProvider.setAuthToken('zoasliu1248sdfuiknuha7882iu4rnuwehifskmkiuwhjg23');
   // Ionic uses AngularUI Router which uses the concept of states
   // Learn more here: https://github.com/angular-ui/ui-router
   // Set up the various states which the app can be in.
   // Each state's controller can be found in controllers.js
+  console.log(SpotifyProvider);
   $stateProvider
       
   .state('landing', {
@@ -107,3 +121,47 @@ angular.module('starter', [
   $urlRouterProvider.otherwise('/landing');
 
 });
+
+
+
+// app.directive('ngSoundcloud', function ($http) {
+//     function link(scope) {
+//       console.log("SoundCloud directive")
+//       var clientid = 'b23455855ab96a4556cbd0a98397ae8c';
+//         $http({
+//             method: 'GET',
+//             url: 'http://api.soundcloud.com/tracks/'+scope.track+'.json?client_id='+clientid
+//         }).
+//         success(function (data) {
+//             console.log(data)
+//             scope.band = data.user.username;
+//             scope.bandUrl = data.user.permalink_url;
+//             scope.title = data.title;
+//             scope.trackUrl = data.permalink_url;
+//             scope.albumArt = data.artwork_url.replace("large", "t500x500");
+//             scope.wave = data.waveform_url;
+//             scope.stream = data.stream_url + '?client_id=' + clientid;
+//             scope.song = new Audio();
+//         });
+//         scope.playing = false;
+//         scope.play = function () {
+//             scope.playing = !scope.playing;
+//             if (!scope.playing) {
+//               scope.song.pause();
+//             }
+//           else
+//             {
+//               if (scope.song.src == '') {scope.song.src = scope.stream;}
+//               scope.song.play();
+//             }
+//         }
+//     }
+//     return {
+//         restrict: 'E',
+//         scope: {
+//             track: '=track',
+//         },
+//         // template: document.getElementById('template').innerHTML,
+//         link: link
+//     };
+// });
