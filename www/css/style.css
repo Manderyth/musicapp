@@ -1,0 +1,63 @@
+.spanColor{
+    background: rgba(255,42,20,.80);
+    border-radius: 20px;
+    text-align: center;
+}
+
+#loginCredentials{
+    transition: all .75s ease-in;
+}
+
+
+.animate-show.ng-hide-add, .animate-show.ng-hide-remove {
+    transition: all .75s ease-out;
+    max-height: 400px;
+}
+
+.animate-show.ng-hide {
+    line-height: 0;
+    opacity: 0;
+    max-height: 0;
+}
+
+
+.button-full{
+    width: 100%;
+}
+
+.transitionAll{
+    transition: all .5s ease-in;
+}
+
+.startHidden{
+    display: none;
+}
+
+.flexColCenter{
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+}
+
+[class^='button']{
+    max-width: 200px;
+}
+
+.border-sides{
+    border-right: 2px solid gray;
+    border-left: 2px solid gray;
+}
+
+
+
+.userName{
+    cursor: pointer;
+}
+
+
+
+.card-background-page {
+
+   position: relative;
+    text-align: center;
+}

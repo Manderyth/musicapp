@@ -9,15 +9,21 @@
     </ion-searchbar><br>
 
     <div>
-      <button ng-click="vm.soundResults('65576692')"> Search</button>
+      <button ng-click="vm.searchResults"> Search</button>
     </div>
-    <div ng-repeat="detail in vm.soundResults">
-      <div style="height: 100px; width: 300px;border: 3px solid black">{{detail.band}}</div>
-      <div style="height: 100px; width: 300px;border: 3px solid black">{{detail.bandUrl}}</div>
+    <div ng-repeat="detail in vm.searchResults.collection" > <!-- this used to be vm.soundResults and that worked-->
+      <ion-card>
 
+        <img ng-src="{{detail.user.avatar_url}}"/>
+        <h2 ng-href="{{ detail.user.permalink_url }}" ng-bind="detail.user.username" class="card-title userName"></h2>
+        <h3 ng-bind="detail.title" class="card-subtitle"></h3>
+        <!--<h4 ng-bind="detail.user.uri"></h4>-->
+      </ion-card>
     </div>
+    <button class="button button-block" ng-href="{{vm.searchResults.next_href}}">Next</button>
 
-
+    <!--<div style="height: 100px; width: 300px;border: 3px solid black">{{detail.username}}</div>-->
+    <!--<div style="height: 100px; width: 300px;border: 3px solid black">{{// detail.}}</div>-->
 
   </ion-content>
 </ion-view>

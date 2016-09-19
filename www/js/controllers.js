@@ -2,9 +2,21 @@ angular.module('starter.controllers', [])
 
 
 
-.controller('ArtistCtrl', function($http) {
+.controller('ArtistCtrl', function(MusicService, $http) {
   vm = this;
   vm.soundCloudData = soundCloudData;
+  vm.getTracks = getTracks;
+
+  function getTracks(){
+    MusicService.getTracks().then(function(tracks){
+      vm.searchResults = tracks;
+      console.log(vm.searchResults);
+    });
+  }
+  
+  function nextPage(){
+    var nextPage = vm.searchResults.next_url; 
+  }
 
   function soundCloudData(track){
     var clientid = 'a8899b413fa9931c7bf9b07305acf27f';
@@ -23,24 +35,14 @@ angular.module('starter.controllers', [])
           stream: data.stream_url + '?client_id=' + clientid
         }];
         vm.soundResults = searchData;
-        console.log(vm.soundResults);
         return searchData;
       })
   }
 
-  var searchData = function(users) {
-    var clientid = 'a8899b413fa9931c7bf9b07305acf27f';
-        $http({
-          method: 'GET',
-          url: 'http://api.soundcloud.com/users/' + users + '.json?client_id=' + clientid
-      })
-
-    vm.soundResults = searchData;
-    console.log(vm.soundResults);
-    return searchData;
-  }; // closes search()
-
+  getTracks();
 }) //closes ArtistCtrl
+    
+    
 
 .controller('landingCtrl', function ($http,$scope, $firebaseAuth, $state, $log, $firebaseObject) {
   vm = this;
