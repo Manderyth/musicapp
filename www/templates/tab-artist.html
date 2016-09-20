@@ -12,7 +12,7 @@
       <button ng-click="vm.searchResults"> Search</button>
     </div>
     <div ng-repeat="detail in vm.searchResults.collection" > <!-- this used to be vm.soundResults and that worked-->
-      <ion-card>
+      <ion-card class = "card-background-page ">
 
         <img ng-src="{{detail.user.avatar_url}}"/>
         <h2 ng-href="{{ detail.user.permalink_url }}" ng-bind="detail.user.username" class="card-title userName"></h2>
@@ -21,6 +21,35 @@
       </ion-card>
     </div>
     <button class="button button-block" ng-href="{{vm.searchResults.next_href}}">Next</button>
+
+
+    <ion-content class="ion-card card-title card-subtitle">
+
+      <ion-card>
+        <img src="img/card-saopaolo.png"/>
+        <div class="card-title">São Paulo</div>
+        <div class="card-subtitle">41 Listings</div>
+      </ion-card>
+
+      <ion-card>
+        <img src="img/card-amsterdam.png"/>
+        <div class="card-title">Amsterdam</div>
+        <div class="card-subtitle">64 Listings</div>
+      </ion-card>
+
+      <ion-card>
+        <img src="img/card-sf.png"/>
+        <div class="card-title">San Francisco</div>
+        <div class="card-subtitle">72 Listings</div>
+      </ion-card>
+
+      <ion-card>
+        <img src="img/card-madison.png"/>
+        <div class="card-title">Madison</div>
+        <div class="card-subtitle">28 Listings</div>
+      </ion-card>
+
+    </ion-content>
 
     <!--<div style="height: 100px; width: 300px;border: 3px solid black">{{detail.username}}</div>-->
     <!--<div style="height: 100px; width: 300px;border: 3px solid black">{{// detail.}}</div>-->
