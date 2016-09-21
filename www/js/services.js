@@ -26,29 +26,13 @@ function MusicService($firebaseArray,$http,$q){
           deferred.resolve(tracks.collection);
         });
           return deferred.promise 
-    }    
+    },
+
+    stopSong: function (song) {
+      player.stop();
+    }
   };
 
-
-
-
-
-  // function getTracks() {
-  //   var deferred = $q.defer();
-  //   SC.initialize({
-  //     client_id: clientid
-  //   });
-  //   var page_size = 20;
-  //   SC.get('/tracks', {
-  //     limit: page_size, linked_partitioning: 1
-  //   }).then(function(tracks) {
-  //     deferred.resolve(tracks.collection);
-  //   });
-  //   return deferred.promise;
-  // };
-
-  // service.soundCloud.getTracks();
-  console.log(SC);
 
   function connectSoundCloud(){
     SC.connect(function(response){
