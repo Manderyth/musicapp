@@ -7,9 +7,10 @@ function MusicService($firebaseArray,$http,$q){
 	service.getUser   = getUser; 
 	service.close 	  = close;
   service.setupSoundCloud = setupSoundCloud; 
-  service.searchTrack = searchTrack; 
   service.isEnter = isEnter; 
-  service.playSong = playSong;
+  // service.searchTrack = searchTrack; 
+  // service.isStreaming = false; 
+  // service.playSong = playSong;
 
   service.soundCloud = {
     scInit: function(){
@@ -27,10 +28,55 @@ function MusicService($firebaseArray,$http,$q){
         });
           return deferred.promise 
     },
-
-    stopSong: function (song) {
-      player.stop();
-    }
+    embedSong: function(song,container){
+        SC.oEmbed('http://api.soundcloud.com/tracks/' + song,{
+           element: container,
+           auto_play: true,
+           maxheight: 166,
+           sharing: false,
+           show_comments: true,
+           show_user: false,
+           buying: false,
+           liking: false,
+           download: true,
+           show_playcount: true,
+           callback: function(){
+            console.log("From the call back in the embedSong")
+           },
+           color: '#ff3a00',
+        });
+    },
+    streamSong: function(song){
+      SC.stream('tracks/' + song).then(function(player){
+        player.play();
+        service.player = player;
+        console.log(service.player)
+        console.log(service.player.controller._state)
+      });
+    },
+    streamPause: function(){
+        var player = service.player; 
+        // player._isPlaying contains true or false for whether it's playing or not.
+        // player.controller._status will show the current state of the song either paused or playing. 
+        // player.controller.stream info contains information about the current track
+        // ie bitrate,duration,extension,issuedAt,protocol,and the url for the playing track
+        player.pause();
+        service.player = player;
+        console.log(service.player.controller._state)
+    },
+    searchTrack: function(query){
+      var deferred = $q.defer();
+      SC.get('/tracks',{
+        limit: 20,
+        linked_partioning: 1,
+        q:query,
+        title:query
+      })
+      .then(function(tracks){
+        deferred.resolve(tracks);
+      })
+      return deferred.promise;
+    }   
   };
 
 
@@ -47,46 +93,12 @@ function MusicService($firebaseArray,$http,$q){
     });
   }
 
-
-  function playSong(song){
-    
-    SC.initialize({
-      client_id: clientid
-    });
-    SC.stream('/tracks/' + song).then(function(player){
-      player.play();
-    });
-  }
-
-
   function isEnter(key){
     if (key !== undefined){
-     return (key.which == 13) ? true : false
+     return (key.which == 13) ? true : false;
     } else {
       return true;
     }
-  }
-
-
-
-
-  function searchTrack(query){
-    var deferred = $q.defer();
-    SC.initialize({
-      client_id: clientid
-    });
-    SC.get('/tracks',{
-      limit: 10,
-      linked_partioning: 1,
-      q:query
-      // bpm:120
-      // title: "stressed out"
-
-    })
-    .then(function(tracks){
-      deferred.resolve(tracks);
-    });
-    return deferred.promise;
   }
 
   function setupSoundCloud(){
@@ -126,64 +138,4 @@ function MusicService($firebaseArray,$http,$q){
 
 
 }
-
-
-
-
-
-
-// angular.module('starter')
-
-//     .service('MusicService', MusicService);
-
-// function MusicService($firebaseArray) {
-//   var self = this;
-
-//   var ref = firebase.database().ref().child("users");
-
-//   self.users = $firebaseArray(ref);
-
-//   self.setupSoundCloud = setupSoundCloud; 
-
-
-//   function setupSoundCloud(){
-//   	SC.initialize({
-//   		client_id: 'a8899b413fa9931c7bf9b07305acf27f',
-//   		redirect_uri: 'http://localhost:8100/#/callback'
-//   	});
-
-//   	SC.connect(function(response){
-//   		sc.get("/me",function(response){
-//   			var data={};
-//   			console.log(response)
-//   		})
-//   	}).then(function(){
-//   		return SC.get('/me');
-//   	}).then(function(me){
-//   		alert('Hello, ' + me.username);
-//   	});
-//   }
-
-//     function soundCloudData(track){
-//     var clientid = 'b23455855ab96a4556cbd0a98397ae8c'
-//     $http({
-//       method: 'GET',
-//       url: 'http://api.soundcloud.com/tracks/'+track+'.json?client_id='+clientid
-//     }).
-//     success(function (data){
-//       console.log(data)
-//       vm.band = data.user.username; 
-//       vm.bandUrl = data.user.permalink_url;
-//       vm.title = data.title;
-//       vm.trackUrl - data.permalink_url;
-//       vm.albumArt = data.artwork_url.replace("large","t500x500")
-//       vm.wave = data.waveform_url;
-//       vm.stream = data.stream_url + '?client_id=' + clientid;
-//     })
-//   }
-
-
-// };
-
-
 
