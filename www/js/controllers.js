@@ -1,4 +1,4 @@
-angular.module('starter.controllers', [])
+angular.module('musicapp.controllers', [])
 
 .controller('ArtistCtrl', function($http,MusicService) {
   var vm = this;
@@ -63,29 +63,26 @@ angular.module('starter.controllers', [])
   vm.MusicService = MusicService; 
 })
 
-.controller('landingCtrl', function ($q,MusicService,$http,$scope, $firebaseAuth, $state, $log, $firebaseObject) {
+.controller('landingCtrl', function (loginService,$q,MusicService,$http,$scope, $firebaseAuth, $state, $log, $firebaseObject) {
   vm = this;
-  vm.login = login;
   vm.showLogin = false;
   vm.loginWithEmail = loginWithEmail;
   vm.showEmailLogin = showEmailLogin;
   vm.logout = logout;
-  vm.setupSoundCloud = MusicService.setupSoundCloud;
-  vm.getTracks = MusicService.getTracks;
   vm.isEnter = isEnter; 
-  // vm.showResults = showResults; 
+  vm.signInProvider = signInProvider;
+
+
+  function signInProvider(){
+    console.log("signing in")
+    loginService.signIn('google').then(function(data){
+      $state.go('tab.artist');
+    })
+  }
+
 
   function isEnter(key){
     return MusicService.isEnter(key)
-  }
- 
-  function login(provider) {
-    console.log("I'm in login");
-    var auth = $firebaseAuth();
-
-    auth.$signInWithPopup(provider)
-        .then(loginSuccess)
-        .catch(loginError);
   }
 
   function showEmailLogin() {
@@ -112,47 +109,6 @@ angular.module('starter.controllers', [])
           })
           .catch(loginError);
     }
-  }
-
-  function loginSuccess(firebaseUser) {
-    $log.log(firebaseUser);
-    vm.displayName = firebaseUser.user ? firebaseUser.user.displayName : firebaseUser.email;
-    vm.showLogin = false;
-    vm.password = undefined;
-
-
-
-
-
-    vm.providerUser = firebaseUser.user;
-    var ref = firebase.database().ref("users");
-    var profileRef = ref.child(vm.providerUser.uid);
-    vm.user = $firebaseObject(profileRef);
-    $log.log(vm.user);
-    $log.log(profileRef);
-    vm.user.$loaded().then(function () {
-      if (!vm.user.displayName) {
-        $log.log("creating user...");
-        profileRef.set({
-          displayName: vm.providerUser.displayName,
-          email: vm.providerUser.email,
-          photoURL: vm.providerUser.photoURL
-        }).then(function () {
-          $log.log("user created.");
-          $state.go('tab.artist');
-        }, function () {
-          $log.log("user could not be created.");
-        });
-      } else {
-        $log.log('user already created!');
-        $state.go('tab.artist');
-      }
-    });
-  }
-
-  function loginError(error) {
-    vm.loginError = error; 
-    $log.log("Authentication failed:", error);
   }
 
   function logout() {
@@ -182,8 +138,43 @@ angular.module('starter.controllers', [])
   $scope.Songs = Songs.get($stateParams.songsId);
 })*/
 
-.controller('AccountCtrl', function($scope) {
-  $scope.settings = {
-    enableFriends: true
+.controller('AccountCtrl', function(loginService,$firebaseArray,$firebaseObject) {
+  var vm = this;
+  this.defaultSettings = {
+    enableFriends: true,
+    showSuggest: true,
+    embedPlayer: true,
+    streamPlayer: false
   };
+  vm.getUserSettings = getUserSettings(); 
+  // vm.settings = loginService.settings; 
+
+  function getUserSettings(){
+    loginService.getUserSettings().then(function(settings){
+      vm.settings = settings; 
+    });
+  }
 });
+
+
+        // var dbSetting = $firebaseArray(settingRef);
+        // console.log(dbSetting);
+        // dbSetting.$loaded().then(function(){
+        //   settingRef.set({
+        //     enable_friends: true,
+        //     show_suggest: true,
+        //     embed_player: true,
+        //     stream_player: false
+        //   })
+        // })
+        // .then(function(settingRef){
+        //   console.log(dbSetting[0])
+        // });
+    
+        // When adding new infromation $add is good. For setting initial information ref.set is used
+        // dbSetting.$add({
+        //   enableFriends: true,
+        //   showSuggest: true,
+        //   embedPlayer: true,
+        //   streamPlayer: false
+        // })
