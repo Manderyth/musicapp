@@ -1,6 +1,7 @@
 angular.module('musicapp.controllers', [])
 
-.controller('ArtistCtrl', function($http,MusicService) {
+
+.controller('ArtistCtrl', function($http,MusicService,$log) {
   var vm = this;
   var showing = false; 
   vm.getTracks = getTracks; 
@@ -65,6 +66,7 @@ angular.module('musicapp.controllers', [])
 
 .controller('landingCtrl', function (loginService,$q,MusicService,$http,$scope, $firebaseAuth, $state, $log, $firebaseObject) {
   vm = this;
+  vm.login = login;
   vm.showLogin = false;
   vm.loginWithEmail = loginWithEmail;
   vm.showEmailLogin = showEmailLogin;
@@ -73,86 +75,148 @@ angular.module('musicapp.controllers', [])
   vm.signInProvider = signInProvider;
 
 
-  function signInProvider(){
-    console.log("signing in")
-    loginService.signIn('google').then(function(data){
-      $state.go('tab.artist');
-    })
-  }
+      function signInProvider(){
+          loginService.signIn('google').then(function(data){
+          $state.go('tab.artist');
+        })
+      }
 
 
-  function isEnter(key){
-    return MusicService.isEnter(key)
-  }
+      function isEnter(key){
+        return MusicService.isEnter(key)
+      }
 
-  function showEmailLogin() {
-    vm.showLogin = !vm.showLogin;
-  }
+      function login(provider) {
+        var auth = $firebaseAuth();
 
-  function loginWithEmail(key) {
-    console.log(key + " " + isEnter(key))
-    if (isEnter(key)){
-      var auth = $firebaseAuth();
-      auth.$createUserWithEmailAndPassword(vm.email, vm.password)
-          .then(function () {
-            auth.$signInWithEmailAndPassword(vm.email, vm.password)
-                .then(loginSuccess)
-                .catch(loginError);
-          }, function (error) {
-            if (error.code === "auth/email-already-in-use") {
-              auth.$signInWithEmailAndPassword(vm.email, vm.password)
-                  .then(loginSuccess)
-                  .catch(loginError);
-            } else {
-              $log.error(error);
+
+        auth.$signInWithPopup(provider)
+            .then(loginSuccess)
+            .catch(loginError);
+      }
+
+      function showEmailLogin() {
+        vm.showLogin = !vm.showLogin;
+      }
+
+
+        function loginWithEmail(key) {
+            $log(key + " " + isEnter(key));
+            if (isEnter(key)){
+                var auth = $firebaseAuth();
+                auth.$createUserWithEmailAndPassword(vm.email, vm.password)
+                    .then(function () {
+                        auth.$signInWithEmailAndPassword(vm.email, vm.password)
+                            .then(loginSuccess)
+                            .catch(loginError);
+                    }, function (error) {
+                        if (error.code === "auth/email-already-in-use") {
+                            auth.$signInWithEmailAndPassword(vm.email, vm.password)
+                                .then(loginSuccess)
+                                .catch(loginError);
+                        } else {
+                            $log.error(error);
+                        }
+                    })
+                    .catch(loginError);
             }
-          })
-          .catch(loginError);
+        }
+
+    function loginSuccess(firebaseUser) {
+        $log.log(firebaseUser);
+        vm.displayName = firebaseUser.user ? firebaseUser.user.displayName : firebaseUser.email;
+        vm.showLogin = false;
+        vm.password = undefined;
+        vm.providerUser = firebaseUser.user;
+        var ref = firebase.database().ref("users");
+        var profileRef = ref.child(vm.providerUser.uid);
+        vm.user = $firebaseObject(profileRef);
+        $log.log(vm.user);
+        $log.log(profileRef);
+        vm.user.$loaded().then(function () {
+            if (!vm.user.displayName) {
+                $log.log("creating user...");
+                profileRef.set({
+                    displayName: vm.providerUser.displayName,
+                    email: vm.providerUser.email,
+                    photoURL: vm.providerUser.photoURL
+                }).then(function () {
+                    $log.log("user created.");
+                    $state.go('tab.artist');
+                }, function () {
+                    $log.log("user could not be created.");
+                });
+            } else {
+                $log.log('user already created!');
+                $state.go('tab.artist');
+            }
+        });
     }
-  }
 
-  function logout() {
-    var auth = $firebaseAuth();
-    $log.log(vm.displayName + " logged out");
-    auth.$signOut();
-    vm.displayName = undefined;
-  }
-})
 
-.controller('SongsCtrl', function($scope, Songs) {
-  // With the new view caching in Ionic, Controllers are only called
-  // when they are recreated or on app start, instead of every page change.
-  // To listen for when this page is active (for example, to refresh data),
-  // listen for the $ionicView.enter event:
-  //
-  //$scope.$on('$ionicView.enter', function(e) {
-  //});
+    function loginError(error) {
+        vm.loginError = error;
+        $log.log("Authentication failed:", error);
+    }
 
-  /*$scope.songs = songs.all();
-  $scope.remove = function(songs) {
-    Songs.remove(songs);
-  };*/
-})
+    function logout() {
+        var auth = $firebaseAuth();
+        $log.log(vm.displayName + " logged out");
+        auth.$signOut();
+        vm.displayName = undefined;
+    }
+    })
 
-/*.controller('SongsDetailCtrl', function($scope, $stateParams, Songs) {
-  $scope.Songs = Songs.get($stateParams.songsId);
-})*/
+    .controller('SongsCtrl', function($scope, bandsintown,$log) {
+      var song = this; 
+      song.getResults = getResults();
 
-.controller('AccountCtrl', function(loginService,$firebaseArray,$firebaseObject) {
-  var vm = this;
-  this.defaultSettings = {
-    enableFriends: true,
-    showSuggest: true,
-    embedPlayer: true,
-    streamPlayer: false
-  };
-  vm.getUserSettings = getUserSettings(); 
-  // vm.settings = loginService.settings; 
 
-  function getUserSettings(){
-    loginService.getUserSettings().then(function(settings){
-      vm.settings = settings; 
-    });
+      function getResults(){
+        $log.info("Getting results");
+        song.resultsBand = bandsintown.resultsBand; 
+        song.resultsVenue= bandsintown.resultsVenue; 
+        // $log.debug(song.results)
+      }
+
+        // With the new view caching in Ionic, Controllers are only called
+        // when they are recreated or on app start, instead of every page change.
+        // To listen for when this page is active (for example, to refresh data),
+        // listen for the $ionicView.enter event:
+        //
+        //$scope.$on('$ionicView.enter', function(e) {
+        //});
+
+        /*$scope.songs = songs.all();
+         $scope.remove = function(songs) {
+         Songs.remove(songs);
+         };*/
+    })
+
+    /*.controller('SongsDetailCtrl', function($scope, $stateParams, Songs) {
+     $scope.Songs = Songs.get($stateParams.songsId);
+     })*/
+
+    .controller('AccountCtrl', function($scope,loginService,$firebaseArray,$firebaseObject) {
+      var vm = this;
+      this.defaultSettings = {
+        enableFriends: true,
+        showSuggest: true,
+        embedPlayer: true,
+        streamPlayer: false
+      };
+      vm.getUserSettings = getUserSettings;
+      // vm.settings = loginService.settings; 
+
+      $scope.$on('$ionicView.enter',function(e){
+        getUserSettings(); 
+      });
+
+
+      function getUserSettings(){
+        loginService.getUserSettings().then(function(settings){
+          vm.settings = settings; 
+        });
   }
 });
 
@@ -178,3 +242,4 @@ angular.module('musicapp.controllers', [])
         //   embedPlayer: true,
         //   streamPlayer: false
         // })
+
