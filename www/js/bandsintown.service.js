@@ -49,13 +49,18 @@
 	    
 	    function getBand(query){
 	    	var deferred = $q.defer(); 
-	    	var url = 'http://api.bandsintown.com/artists/' + query + '/events.json?api_version=2.0&app_id=musicapp_matc'
+	    	var url = 'http://api.bandsintown.com/artists/' + query + '/events.json?api_version=2.0&app_id=musicapp_matc';
 
-
+			var headers = {
+				'Access-Control-Allow-Origin' : '*',
+				'Access-Control-Allow-Methods' : 'POST, GET, OPTIONS, PUT',
+				'Content-Type': 'application/json',
+				'Accept': 'application/json'
+			};
 			$http({
 			  method: 'GET',
-			  dataType: 'jsonp',
-			  url: url
+			  url: url,
+			  header: headers
 			})
 			.then(function successCallback(response) {
 				deferred.resolve(response.data); 
