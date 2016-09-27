@@ -516,15 +516,12 @@
               'menubar=no,location=no,resizable=yes,scrollbars=yes,status=no,width=' + w + ',height=' + h + ',top=' + top + ',left=' + left,
               function () {
                 if (!authCompleted) {
-                  authWindow.close();
                   deferred.reject();
                 }
               }
             );
 
             function storageChanged (e) {
-              console.log(e.key);
-              // console.log("Storage Changed");
               if (e.key === 'spotify-token') {
                 if (authWindow) { authWindow.close(); }
                 authCompleted = true;
