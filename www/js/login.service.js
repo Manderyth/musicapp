@@ -10,7 +10,7 @@
         ls.signOut	   = signOut;
         ls.getTime	   = getTime;
         // ls.signOut();
-        ls.isLoggedIn  = isLoggedIn();
+        ls.isLoggedIn  = isLoggedIn;
         ls.currentUser = setCurrentUser();
         ls.authDataCheck = authDataCheck;
         ls.getUserSettings = getUserSettings;

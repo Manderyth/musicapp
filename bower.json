@@ -1,15 +1,18 @@
 {
-  "name": "HelloIonic",
+  "name": "musicapp",
   "private": "true",
   "devDependencies": {
-<<<<<<< HEAD
-    "ionic": "driftyco/ionic-bower#1.3.1"
-  },
-  "dependencies": {
-    "angular-spotify": "^1.4.2"
-=======
     "ionic": "driftyco/ionic-bower#1.3.1",
     "platform.js": "platform#^1.3.1"
->>>>>>> a3c9e9a579d78f3c2268d5951a165ae7cb30b1f1
+  },
+  "resolutions": {
+    "angular": "^1.3.0"
+  },
+  "dependencies": {
+    "angularfire": "^2.0.2",
+    "angularLocalStorage": "ngStorage#^0.3.2",
+    "soundcloud": "^3.1.2",
+    "firebase": "^3.4.1",
+    "ngstorage": "^0.3.11"
   }
 }
