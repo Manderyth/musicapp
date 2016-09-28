@@ -1,7 +1,7 @@
 angular.module('musicapp.controllers', [])
 
 
-.controller('ArtistCtrl', function($http,MusicService,$log) {
+.controller('ArtistCtrl', function($http,MusicService,$log,loginService,$scope) {
   var vm = this;
   var showing = false; 
   vm.getTracks = getTracks; 
@@ -11,9 +11,24 @@ angular.module('musicapp.controllers', [])
   vm.streamSong = streamSong;
   vm.streamPause = streamPause; 
   vm.initCloud = MusicService.soundCloud.scInit();
-  vm.mySC = MusicService.soundCloud; 
-  vm.showingWidget = true; 
-  vm.isStreaming = false; 
+  vm.mySC = MusicService.soundCloud;
+  vm.user = loginService.currentUser.uid;
+  vm.getUserSettings = getUserSettings;
+
+
+  $scope.$on('$ionicView.enter',function(e){
+    getUserSettings(); 
+  });
+
+
+  function getUserSettings(){
+    var id = vm.user; 
+    var ref = firebase.database().ref().child('user_information/');
+    ref.child(id).once('value',function(snapshot){
+      var data = snapshot.val();
+      vm.showingWidget = data.embed_player;
+    })
+  } 
 
  function embedSong(song){
   console.log("Embed song")
@@ -57,6 +72,7 @@ angular.module('musicapp.controllers', [])
       vm.searchResults = tracks;
     });
   }
+  getUserSettings();
    getTracks();
 })
 
@@ -68,7 +84,6 @@ angular.module('musicapp.controllers', [])
 
 .controller('landingCtrl', function (loginService,$q,MusicService,$http,$scope, $firebaseAuth, $state, $log, $firebaseObject) {
   vm = this;
-  vm.login = login;
   vm.showLogin = false;
   vm.loginWithEmail = loginWithEmail;
   vm.showEmailLogin = showEmailLogin;
@@ -86,15 +101,6 @@ angular.module('musicapp.controllers', [])
 
       function isEnter(key){
         return MusicService.isEnter(key)
-      }
-
-      function login(provider) {
-        var auth = $firebaseAuth();
-
-
-        auth.$signInWithPopup(provider)
-            .then(loginSuccess)
-            .catch(loginError);
       }
 
       function showEmailLogin() {
@@ -123,43 +129,6 @@ angular.module('musicapp.controllers', [])
                     .catch(loginError);
             }
         }
-
-    // function loginSuccess(firebaseUser) {
-    //     $log.log(firebaseUser);
-    //     vm.displayName = firebaseUser.user ? firebaseUser.user.displayName : firebaseUser.email;
-    //     vm.showLogin = false;
-    //     vm.password = undefined;
-    //     vm.providerUser = firebaseUser.user;
-    //     var ref = firebase.database().ref("users");
-    //     var profileRef = ref.child(vm.providerUser.uid);
-    //     vm.user = $firebaseObject(profileRef);
-    //     $log.log(vm.user);
-    //     $log.log(profileRef);
-    //     vm.user.$loaded().then(function () {
-    //         if (!vm.user.displayName) {
-    //             $log.log("creating user...");
-    //             profileRef.set({
-    //                 displayName: vm.providerUser.displayName,
-    //                 email: vm.providerUser.email,
-    //                 photoURL: vm.providerUser.photoURL
-    //             }).then(function () {
-    //                 $log.log("user created.");
-    //                 $state.go('tab.artist');
-    //             }, function () {
-    //                 $log.log("user could not be created.");
-    //             });
-    //         } else {
-    //             $log.log('user already created!');
-    //             $state.go('tab.artist');
-    //         }
-    //     });
-    // }
-
-
-    // function loginError(error) {
-    //     vm.loginError = error;
-    //     $log.log("Authentication failed:", error);
-    // }
 
     function logout() {
         var auth = $firebaseAuth();
@@ -205,49 +174,38 @@ angular.module('musicapp.controllers', [])
      $scope.Songs = Songs.get($stateParams.songsId);
      })*/
 
-    .controller('AccountCtrl', function($scope,loginService,$firebaseArray,$firebaseObject) {
+    .controller('AccountCtrl', function($scope,loginService,$firebaseArray,$firebaseObject,$log,$state) {
       var vm = this;
-      this.defaultSettings = {
-        enableFriends: true,
-        showSuggest: true,
-        embedPlayer: true,
-        streamPlayer: false
-      };
       vm.getUserSettings = getUserSettings;
-      // vm.settings = loginService.settings; 
+      vm.toggleSetting   = toggleSetting;
+      vm.user            = loginService.currentUser;
+      vm.signout         = signOut; 
 
+      function signOut(){
+        msg = "Signing out";
+        loginService.signOut(msg);
+        $state.go('landing');
+      }
+    
+      function toggleSetting(id,setting,set){
+        var user = vm.user; 
+        var ref = firebase.database().ref().child('user_information/');
+        console.log(user.uid)
+        ref.child(id).once("value",function(snapshot){
+          var data = snapshot.val();
+          ref.child(id).child(setting).set(set);
+        })
+        console.log(vm.settings)
+      }
+    
       $scope.$on('$ionicView.enter',function(e){
         getUserSettings(); 
       });
 
 
       function getUserSettings(){
-        loginService.getUserSettings().then(function(settings){
-          vm.settings = settings; 
-        });
-  }
+        var ref = firebase.database().ref().child('user_information/').child(loginService.currentUser.uid);
+         vm.settings = $firebaseObject(ref);
+      }
 });
-
-
-        // var dbSetting = $firebaseArray(settingRef);
-        // console.log(dbSetting);
-        // dbSetting.$loaded().then(function(){
-        //   settingRef.set({
-        //     enable_friends: true,
-        //     show_suggest: true,
-        //     embed_player: true,
-        //     stream_player: false
-        //   })
-        // })
-        // .then(function(settingRef){
-        //   console.log(dbSetting[0])
-        // });
-    
-        // When adding new infromation $add is good. For setting initial information ref.set is used
-        // dbSetting.$add({
-        //   enableFriends: true,
-        //   showSuggest: true,
-        //   embedPlayer: true,
-        //   streamPlayer: false
-        // })
 
